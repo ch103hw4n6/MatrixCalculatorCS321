@@ -15,18 +15,14 @@ public class Matrix {
 
     /**
      * Constructs a Matrix object with the specified number of rows and columns.
+     * Initialize all elements to zero
+     * 
      * @param rows the number of rows in the matrix
      * @param cols the number of columns in the matrix
     */
     
     public Matrix(int rows, int cols) {
-        // TODO: Implement constructor
-        // Preconditions: 
-        // N/A
-        
-        // Postconditions:
-        // A new Matrix object with the specified number of rows and columns is created,
-        // and the matrix is initialized with all elements set to zero.
+        // Initialize the 2D array with specified dimensions
         
         data = new double[rows][cols];
     }
@@ -38,16 +34,10 @@ public class Matrix {
      * @return the element at the specified position
      */
     public double getElement(int row, int cols) {
-        // TODO: Implement getElement method
+        // Assumes precondition that the element exists at (row, cols)
         
-        // Preconditions: 
-        // An elemeent must exist at (row,col)
-        
-        // Postconditions:
-        // Element is retrived
-        
-        return 0;
-        // TODO: Implement return statement
+        // TODO: Error Checking
+        return data[row][cols];
     }
 
     /**
