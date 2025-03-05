@@ -73,7 +73,7 @@ public class Matrix {
     public int getRows() {
         // TODO: Implement getRows method
         // Preconditions: 
-        // N/A
+        // N/A d
         
         // Postconditions:
         // Number of rows in stored in return value
