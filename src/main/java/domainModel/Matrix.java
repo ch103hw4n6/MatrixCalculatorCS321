@@ -6,7 +6,7 @@ package domainModel;
 
 /**
  *  Initialization and methods for a matrix
- * @author Chloe
+ *  @author Chloe, Carter
  */
 public class Matrix {
 
@@ -19,72 +19,79 @@ public class Matrix {
      * 
      * @param rows the number of rows in the matrix
      * @param cols the number of columns in the matrix
-    */
-    
+     * 
+     * Preconditions:
+     * - rows and cols must be greater than 0
+     * 
+     * Postconditions:
+     * - Matrix is initialized with dimensions [rows][cols], all values set to 0.0
+     */
     public Matrix(int rows, int cols) {
         // Initialize the 2D array with specified dimensions
-        
         data = new double[rows][cols];
     }
 
     /**
      * Gets the element at a specific position in the matrix
+     * 
      * @param row the row index of element 
      * @param cols the column index of element 
      * @return the element at the specified position
+     * 
+     * Preconditions:
+     * - The specified indices must be within bounds
+     * 
+     * Postconditions:
+     * - Returns the value stored at position (row, cols)
      */
     public double getElement(int row, int cols) {
-        // Assumes precondition that the element exists at (row, cols)
-        
-        // TODO: Error Checking
         return data[row][cols];
     }
 
     /**
      * Sets the element at a specific position in the matrix
+     * 
      * @param row the row index where the element will be set 
      * @param cols the column index where the element will be set 
      * @param value the value to set at the specified position
+     * 
+     * Preconditions:
+     * - The specified indices must be within bounds
+     * 
+     * Postconditions:
+     * - The value at (row, cols) is updated to the specified value
      */
-    
     public void setElement(int row, int cols, double value) {
-        // TODO: Implement setElement method
-        // Preconditions: 
-        // N/A
-        
-        // Postconditions:
-        // Value is set at specified position
+        data[row][cols] = value;
     }
 
     /**
      * Gets the number of rows in the matrix.
+     * 
      * @return the number of rows in the matrix
+     * 
+     * Preconditions:
+     * - N/A
+     * 
+     * Postconditions:
+     * - Returns the row count of the matrix
      */
     public int getRows() {
-        // TODO: Implement getRows method
-        // Preconditions: 
-        // N/A d
-        
-        // Postconditions:
-        // Number of rows in stored in return value
-        return 0;  
-        // TODO: implement return value variable
+        return data.length;
     }
 
     /**
      * Gets the number of columns in the matrix.
+     * 
      * @return the number of columns in the matrix
+     * 
+     * Preconditions:
+     * - Assumes matrix has at least one row
+     * 
+     * Postconditions:
+     * - Returns the column count of the matrix
      */
     public int getCols() {
-        // TODO: Implement getCols method
-        // Preconditions: 
-        // N/A
-        
-        // Postconditions:
-        // Number of columns in stored in return value
-        
-        return 0;  
-        // TODO: implement return value variable
+        return data[0].length;
     }
 }
-
