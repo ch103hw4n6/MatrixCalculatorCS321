@@ -1,19 +1,7 @@
-package calculator;
+package domainModel;
 
 import java.util.Scanner;
-
-/* TODO: 
-    Using possibly Java Swing to implement UI where each button associates
-    with the below functions.
-                1. Add fillable boxes to take inputs for matrices
-                2. Add clear/reset functions to take new input matrices
-                3. Error handling for default inputs/operations
-                4. Robust prompts to verify proper inputs before operations
-    The main function below showcases only the matrix transpose output to the
-    terminal window with accepting user input also from the terminal window.
-
-    
-*/ 
+import org.apache.commons.math3.linear.*;
 
 public class MatrixCalculator {
     
@@ -50,6 +38,17 @@ public class MatrixCalculator {
         }
         return result;
     }
+    
+    public static int[][] subtractMatrices(int[][] A, int[][] B) {
+        int rows = A.length, cols = A[0].length;
+        int[][] result = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[i][j] = A[i][j] - B[i][j];
+            }
+        }
+        return result;
+    }
 
     // Matrix multiplication
     public static int[][] multiplyMatrices(int[][] A, int[][] B) {
@@ -76,6 +75,66 @@ public class MatrixCalculator {
         }
         return result;
     }
+    
+    // Inverse a square matrix using Gauss–Jordan elimination
+    public static double[][] inverseMatrix(int[][] matrix) {
+        int n = matrix.length;
+        if(n != matrix[0].length) {
+            return null; // Not a square matrix
+        }
+        
+        // Build augmented matrix [matrix | identity]
+        double[][] aug = new double[n][2 * n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                aug[i][j] = matrix[i][j];
+            }
+            for (int j = n; j < 2 * n; j++) {
+                aug[i][j] = (i == j - n) ? 1 : 0;
+            }
+        }
+        
+        // Forward elimination to form reduced row echelon form
+        for (int i = 0; i < n; i++) {
+            // If pivot is zero, swap with a lower row
+            if (aug[i][i] == 0) {
+                int swap = i + 1;
+                while (swap < n && aug[swap][i] == 0) {
+                    swap++;
+                }
+                if (swap == n) {
+                    return null; // Singular matrix
+                }
+                double[] temp = aug[i];
+                aug[i] = aug[swap];
+                aug[swap] = temp;
+            }
+            // Normalize the pivot row
+            double pivot = aug[i][i];
+            for (int j = 0; j < 2 * n; j++) {
+                aug[i][j] /= pivot;
+            }
+            // Eliminate pivot column from other rows
+            for (int k = 0; k < n; k++) {
+                if (k != i) {
+                    double factor = aug[k][i];
+                    for (int j = 0; j < 2 * n; j++) {
+                        aug[k][j] -= factor * aug[i][j];
+                    }
+                }
+            }
+        }
+        
+        // Extract the inverse matrix
+        double[][] inverse = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                inverse[i][j] = aug[i][j + n];
+            }
+        }
+        return inverse;
+    }
+
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -95,6 +154,69 @@ public class MatrixCalculator {
 
         scanner.close();
     }
+    
+    
+    public static int[][] scaleMatrix(int[][] matrix, int scalar) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int[][] result = new int[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result[i][j] = matrix[i][j] * scalar;
+            }
+        }
+
+        return result;
+    }
+    
+    public static double detMatrix(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        double[][] doubleMatrix = new double[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                doubleMatrix[i][j] = matrix[i][j];
+            }
+        }
+        RealMatrix realMatrix = MatrixUtils.createRealMatrix(doubleMatrix);
+        LUDecomposition decomposition = new LUDecomposition(realMatrix);
+        double det = decomposition.getDeterminant();
+        return det;
+    }
+    
+    public static double[] eigenvalueMatrix(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        double[][] doubleMatrix = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                doubleMatrix[i][j] = matrix[i][j];
+            }
+        }
+        RealMatrix realMatrix = MatrixUtils.createRealMatrix(doubleMatrix);
+        EigenDecomposition eigenDecomp = new EigenDecomposition(realMatrix);
+        double[] eigenvalues = eigenDecomp.getRealEigenvalues();
+        return eigenvalues;
+    }
+    public static double[][] eigenvectorMatrix(int[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        double[][] doubleMatrix = new double[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                doubleMatrix[i][j] = matrix[i][j];
+            }
+        }
+        RealMatrix realMatrix = MatrixUtils.createRealMatrix(doubleMatrix);
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(realMatrix);
+        RealMatrix eigenvectors = eigenDecomposition.getV();
+        return eigenvectors.getData();
+    }
+   
+    
+    
 }
 
 
