@@ -34,7 +34,10 @@ public class MatrixCalculatorGUI extends JFrame {
         List<String> unaryInstructions = new ArrayList<>();
         unaryInstructions.add("Transpose: compute the transpose of a matrix.");
         unaryInstructions.add("Inverse: compute the inverse of a matrix (square matrices only).");
-
+        unaryInstructions.add("Scale: scale a matrix by a rational number.");
+        unaryInstructions.add("Determinants: compute the determinant of a matrix (square matrices only).");
+        unaryInstructions.add("Eigendecomposition: compute the eigendecomposition of a matrix (square matrices only).");
+        
         for (String instruction : unaryInstructions) {
             JLabel instructionLabel = new JLabel("• " + instruction);
             instructionLabel.setFont(instructionFont);
@@ -182,18 +185,7 @@ public class MatrixCalculatorGUI extends JFrame {
         inverseButton.addActionListener(e -> performMatrixOperation("inverse"));
         swapButton.addActionListener(e -> swapMatrices());
         clearButton.addActionListener(e -> clearInputs());
-        scaleButton.addActionListener(e -> {
-            try {
-                int scalar = Integer.parseInt(scalarField.getText());
-                int[][] matrix = getMatrixFromTable(matrix1Table);
-                if (matrix == null) 
-                    return;
-                int[][] result = MatrixCalculator.scaleMatrix(matrix, scalar);
-                updateResultTable(result);
-                } catch (NumberFormatException ex) {
-                    showError("Invalid scalar value. Please enter an integer.");
-                }   
-        });
+        scaleButton.addActionListener(e -> performMatrixOperation("scale"));
         detButton.addActionListener(e -> {
             try {
                 int[][] matrix = getMatrixFromTable(matrix1Table);
@@ -375,6 +367,11 @@ public class MatrixCalculatorGUI extends JFrame {
                         return;
                     }
                     updateResultTable(inv);
+                    return;
+                case "scale":
+                    double scalar = Double.parseDouble(scalarField.getText());
+                    double[][] scaled = MatrixCalculator.scaleMatrix(matrix1,scalar);
+                    updateResultTable(scaled);
                     return;
             }
 
