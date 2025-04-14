@@ -3,15 +3,73 @@ package domainModel;
 import java.util.Arrays;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.border.EmptyBorder;
+import java.util.ArrayList; 
+import java.util.List;
+ 
 
 public class MatrixCalculatorGUI extends JFrame {
     private JTextField rowsField1, colsField1, rowsField2, colsField2, scalarField;
     private JTable matrix1Table, matrix2Table, resultTable;
     private JButton addButton, multiplyButton, subtractButton, transposeButton, clearButton,swapButton,inverseButton, createTablesButton,scaleButton, detButton,evalueButton, evectButton;
     private JScrollPane matrix1ScrollPane, matrix2ScrollPane, resultScrollPane;
-    private JPanel tablePanel;
-
+    private JPanel tablePanel; 
+    
+    
     public MatrixCalculatorGUI() {
+        // Header Panel with formatted instructions 
+        JLabel headerLabel = new JLabel("Matrix Calculator Instructions:");
+        headerLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        JPanel instructionsPanel = new JPanel();
+        instructionsPanel.setLayout(new BoxLayout(instructionsPanel, BoxLayout.Y_AXIS));
+
+        Font sectionFont = new Font("SansSerif", Font.BOLD, 14);
+        Font instructionFont = new Font("SansSerif", Font.PLAIN, 12);
+
+        JLabel unaryLabel = new JLabel("Unary Operations (Matrix 1 only):");
+        unaryLabel.setFont(sectionFont);
+        instructionsPanel.add(unaryLabel);
+
+        List<String> unaryInstructions = new ArrayList<>();
+        unaryInstructions.add("Transpose: compute the transpose of a matrix.");
+        unaryInstructions.add("Inverse: compute the inverse of a matrix (square matrices only).");
+
+        for (String instruction : unaryInstructions) {
+            JLabel instructionLabel = new JLabel("• " + instruction);
+            instructionLabel.setFont(instructionFont);
+            instructionsPanel.add(instructionLabel);
+        }
+
+        JLabel unaryNoteLabel = new JLabel("Note: For unary operations, only Matrix 1 is used. Enter 0 for rows/columns of Matrix 2.");
+        unaryNoteLabel.setFont(instructionFont);
+        instructionsPanel.add(unaryNoteLabel);
+
+        JLabel binaryLabel = new JLabel("Binary Operations:");
+        binaryLabel.setFont(sectionFont);
+        instructionsPanel.add(binaryLabel);
+
+        List<String> binaryInstructions = new ArrayList<>();
+        binaryInstructions.add("Add: perform matrix addition.");
+        binaryInstructions.add("Subtract: perform matrix subtraction.");
+        binaryInstructions.add("Multiply: perform matrix multiplication.");
+
+        for (String instruction : binaryInstructions) {
+            JLabel instructionLabel = new JLabel("• " + instruction);
+            instructionLabel.setFont(instructionFont);
+            instructionsPanel.add(instructionLabel);
+        }
+
+        JLabel enterNoteLabel = new JLabel("Important: After entering values in the matrix tables, press the Enter key in each cell to ensure the value is registered.");
+        enterNoteLabel.setFont(instructionFont);
+        instructionsPanel.add(enterNoteLabel);
+
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.add(headerLabel, BorderLayout.NORTH);
+        headerPanel.add(instructionsPanel, BorderLayout.CENTER);
+        headerPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+
         setTitle("Matrix Calculator");
         setSize(700, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -21,6 +79,7 @@ public class MatrixCalculatorGUI extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
+        
 
         // Panel for matrix size inputs
         JPanel inputPanel = new JPanel(new GridLayout(2, 4, 5, 5));
@@ -39,20 +98,27 @@ public class MatrixCalculatorGUI extends JFrame {
         inputPanel.add(colsField2);
 
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.gridwidth = 2;
         add(inputPanel, gbc);
+        
+        // instructions
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        add(headerPanel, gbc);
+   
 
         // Button to create tables
         createTablesButton = new JButton("Create Matrices");
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         add(createTablesButton, gbc);
 
         // Table Panel
         tablePanel = new JPanel(new GridLayout(1, 3, 10, 10));
         tablePanel.setBorder(BorderFactory.createTitledBorder("Matrix Tables"));
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         add(tablePanel, gbc);
 
@@ -84,21 +150,21 @@ public class MatrixCalculatorGUI extends JFrame {
         buttonPanel.add(multiplyButton);
         buttonPanel.add(swapButton);
         buttonPanel.add(clearButton);
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         add(buttonPanel, gbc);
         
         buttonPanelmid.add(transposeButton);
         buttonPanelmid.add(inverseButton);
         buttonPanelmid.add(scaleButton);
         buttonPanelmid.add(scalarField);
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         add(buttonPanelmid, gbc);
         
         
         buttonPanelBottom.add(detButton);
         buttonPanelBottom.add(evalueButton);
         buttonPanelBottom.add(evectButton);
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         add(buttonPanelBottom, gbc);
         
         
