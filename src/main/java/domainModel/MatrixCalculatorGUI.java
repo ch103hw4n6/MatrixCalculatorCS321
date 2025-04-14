@@ -1,12 +1,13 @@
-package calculator;
+package domainModel;
 
+import java.util.Arrays;
 import javax.swing.*;
 import java.awt.*;
 
 public class MatrixCalculatorGUI extends JFrame {
-    private JTextField rowsField1, colsField1, rowsField2, colsField2;
+    private JTextField rowsField1, colsField1, rowsField2, colsField2, scalarField;
     private JTable matrix1Table, matrix2Table, resultTable;
-    private JButton addButton, multiplyButton, transposeButton, clearButton, createTablesButton;
+    private JButton addButton, multiplyButton, subtractButton, transposeButton, clearButton,swapButton,inverseButton, createTablesButton,scaleButton, detButton,evalueButton, evectButton;
     private JScrollPane matrix1ScrollPane, matrix2ScrollPane, resultScrollPane;
     private JPanel tablePanel;
 
@@ -58,24 +59,108 @@ public class MatrixCalculatorGUI extends JFrame {
         // Buttons Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         addButton = new JButton("Add");
+        subtractButton = new JButton("Subtract");
         multiplyButton = new JButton("Multiply");
-        transposeButton = new JButton("Transpose");
+        swapButton = new JButton("Swap");
         clearButton = new JButton("Clear");
-
+        
+        
+        JPanel buttonPanelmid = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        transposeButton = new JButton("Transpose");
+        inverseButton = new JButton("Inverse"); 
+        scaleButton = new JButton("Scale by:");
+        
+        
+        
+        JPanel buttonPanelBottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        evalueButton = new JButton("Eigenvalue");
+        evectButton = new JButton("Eigenvector");
+        scalarField = new JTextField(3);
+        detButton = new JButton("Det");
+      
+        
         buttonPanel.add(addButton);
+        buttonPanel.add(subtractButton);
         buttonPanel.add(multiplyButton);
-        buttonPanel.add(transposeButton);
+        buttonPanel.add(swapButton);
         buttonPanel.add(clearButton);
         gbc.gridy = 3;
         add(buttonPanel, gbc);
+        
+        buttonPanelmid.add(transposeButton);
+        buttonPanelmid.add(inverseButton);
+        buttonPanelmid.add(scaleButton);
+        buttonPanelmid.add(scalarField);
+        gbc.gridy = 4;
+        add(buttonPanelmid, gbc);
+        
+        
+        buttonPanelBottom.add(detButton);
+        buttonPanelBottom.add(evalueButton);
+        buttonPanelBottom.add(evectButton);
+        gbc.gridy = 5;
+        add(buttonPanelBottom, gbc);
+        
+        
+        
 
         // Button Actions
         createTablesButton.addActionListener(e -> createTables());
         addButton.addActionListener(e -> performMatrixOperation("add"));
+        subtractButton.addActionListener(e -> performMatrixOperation("subtract"));
         multiplyButton.addActionListener(e -> performMatrixOperation("multiply"));
         transposeButton.addActionListener(e -> performMatrixOperation("transpose"));
+        inverseButton.addActionListener(e -> performMatrixOperation("inverse"));
+        swapButton.addActionListener(e -> swapMatrices());
         clearButton.addActionListener(e -> clearInputs());
+        scaleButton.addActionListener(e -> {
+            try {
+                int scalar = Integer.parseInt(scalarField.getText());
+                int[][] matrix = getMatrixFromTable(matrix1Table);
+                if (matrix == null) 
+                    return;
+                int[][] result = MatrixCalculator.scaleMatrix(matrix, scalar);
+                updateResultTable(result);
+                } catch (NumberFormatException ex) {
+                    showError("Invalid scalar value. Please enter an integer.");
+                }   
+        });
+        detButton.addActionListener(e -> {
+            try {
+                int[][] matrix = getMatrixFromTable(matrix1Table);
+                if (matrix == null) return;
 
+                double det = MatrixCalculator.detMatrix(matrix);
+                JOptionPane.showMessageDialog(this, "Determinant: " + det, "Result", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    showError("Cannot calculate determinant. Make sure matrix is square and valid.");
+            }
+        });
+        evalueButton.addActionListener(e -> {
+            try {
+                int[][] matrix = getMatrixFromTable(matrix1Table);
+                if (matrix == null) return;
+
+                double[] evalue = MatrixCalculator.eigenvalueMatrix(matrix);
+                String evalueStr = Arrays.toString(evalue);
+                JOptionPane.showMessageDialog(this, "Eigenvalues: " + evalueStr, "Result", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    showError("Cannot calculate eigenvalue. Make sure matrix is square and valid.");
+            }
+        });
+        evectButton.addActionListener(e -> {
+            try {
+                int[][] matrix = getMatrixFromTable(matrix1Table);
+                if (matrix == null) return;
+
+                double[][] evector = MatrixCalculator.eigenvectorMatrix(matrix);
+                String evectorStr = Arrays.deepToString(evector);
+                JOptionPane.showMessageDialog(this, "Eigenvectors: " + evectorStr, "Result", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    showError("Cannot calculate eigenvectors. Make sure matrix is square and valid.");
+            }
+        });
+     
         setVisible(true);
     }
     
@@ -197,12 +282,27 @@ public class MatrixCalculatorGUI extends JFrame {
                 case "add":
                     result = MatrixCalculator.addMatrices(matrix1, matrix2);
                     break;
+                 case "subtract":
+                    result = MatrixCalculator.subtractMatrices(matrix1, matrix2);
+                    break;
                 case "multiply":
                     result = MatrixCalculator.multiplyMatrices(matrix1, matrix2);
                     break;
                 case "transpose":
                     result = MatrixCalculator.transposeMatrix(matrix1);
                     break;
+                case "inverse":
+                    if (matrix1.length != matrix1[0].length) {
+                        showError("Matrix must be square for inverse calculation!");
+                        return;
+                    }
+                    double[][] inv = MatrixCalculator.inverseMatrix(matrix1);
+                    if (inv == null) {
+                        showError("Matrix is singular (not invertible)!");
+                        return;
+                    }
+                    updateResultTable(inv);
+                    return;
             }
 
             if (result != null) {
@@ -228,6 +328,33 @@ public class MatrixCalculatorGUI extends JFrame {
 
         resultTable.revalidate();
         resultTable.repaint();
+    }
+    
+    // Overloaded method to update the result table for double matrices (used for inverse)
+    private void updateResultTable(double[][] result) {
+        int rows = result.length;
+        int cols = result[0].length;
+        resultTable.setModel(new javax.swing.table.DefaultTableModel(rows, cols));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                resultTable.setValueAt(result[i][j], i, j);
+            }
+        }
+        resultTable.revalidate();
+        resultTable.repaint();
+    }
+
+    
+    private void swapMatrices() {
+        if (matrix1Table == null || matrix2Table == null) {
+            showError("Matrices are not initialized!");
+            return;
+        }
+        javax.swing.table.TableModel tempModel = matrix1Table.getModel();
+        matrix1Table.setModel(matrix2Table.getModel());
+        matrix2Table.setModel(tempModel);
+        matrix1Table.revalidate();
+        matrix2Table.revalidate();
     }
 
     private void showError(String message) {
