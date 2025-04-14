@@ -73,7 +73,8 @@ public class MatrixCalculatorGUI extends JFrame {
         setTitle("Matrix Calculator");
         setSize(700, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridBagLayout());
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        setContentPane(new JScrollPane(contentPanel));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -100,27 +101,29 @@ public class MatrixCalculatorGUI extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2;
-        add(inputPanel, gbc);
+        contentPanel.add(inputPanel, gbc);
         
         // instructions
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        add(headerPanel, gbc);
+        contentPanel.add(headerPanel, gbc);
    
 
         // Button to create tables
         createTablesButton = new JButton("Create Matrices");
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        add(createTablesButton, gbc);
+        contentPanel.add(createTablesButton, gbc);
 
         // Table Panel
-        tablePanel = new JPanel(new GridLayout(1, 3, 10, 10));
+        tablePanel = new JPanel();
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.X_AXIS));
+        tablePanel.setPreferredSize(new Dimension(600, 250));
         tablePanel.setBorder(BorderFactory.createTitledBorder("Matrix Tables"));
         gbc.gridy = 3;
         gbc.gridwidth = 2;
-        add(tablePanel, gbc);
+        contentPanel.add(tablePanel, gbc);
 
         // Buttons Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -151,21 +154,21 @@ public class MatrixCalculatorGUI extends JFrame {
         buttonPanel.add(swapButton);
         buttonPanel.add(clearButton);
         gbc.gridy = 4;
-        add(buttonPanel, gbc);
+        contentPanel.add(buttonPanel, gbc);
         
         buttonPanelmid.add(transposeButton);
         buttonPanelmid.add(inverseButton);
         buttonPanelmid.add(scaleButton);
         buttonPanelmid.add(scalarField);
         gbc.gridy = 5;
-        add(buttonPanelmid, gbc);
+        contentPanel.add(buttonPanelmid, gbc);
         
         
         buttonPanelBottom.add(detButton);
         buttonPanelBottom.add(evalueButton);
         buttonPanelBottom.add(evectButton);
         gbc.gridy = 6;
-        add(buttonPanelBottom, gbc);
+        contentPanel.add(buttonPanelBottom, gbc);
         
         
         
@@ -272,10 +275,14 @@ public class MatrixCalculatorGUI extends JFrame {
             matrix2ScrollPane.setBorder(BorderFactory.createTitledBorder("Matrix 2"));
             resultScrollPane.setBorder(BorderFactory.createTitledBorder("Result"));
 
-            // Ensure proper display by setting fixed dimensions
-            matrix1ScrollPane.setPreferredSize(new Dimension(200, 200));
-            matrix2ScrollPane.setPreferredSize(new Dimension(200, 200));
-            resultScrollPane.setPreferredSize(new Dimension(200, 200));
+            // Ensure proper display by setting flex dimensions
+            matrix1ScrollPane.setPreferredSize(null); // auto-resize
+            matrix1ScrollPane.setMinimumSize(new Dimension(180, 180)); // fallback minimum
+            matrix2ScrollPane.setPreferredSize(null); // auto-resize
+            matrix2ScrollPane.setMinimumSize(new Dimension(180, 180)); // fallback minimum
+            resultScrollPane.setPreferredSize(null); // auto-resize
+            resultScrollPane.setMinimumSize(new Dimension(180, 180)); // fallback minimum
+
 
             // Adjust tablePanel layout
             tablePanel.removeAll();
