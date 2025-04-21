@@ -1,9 +1,60 @@
 package domainModel;
 
+import java.io.*;
+import java.util.*;
 import java.util.Scanner;
 import org.apache.commons.math3.linear.*;
 
 public class MatrixCalculator {
+    private static final String FILE_PATH = "history.csv";
+    
+    public static void saveMatrixToCSV(int[][] matrix) {
+        double[][] doubleMatrix = new double[matrix.length][matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                doubleMatrix[i][j] = matrix[i][j];
+            }
+        }
+
+        saveMatrixToCSV(doubleMatrix);
+    }
+    
+    // overload bc of inverse double result
+    public static void saveMatrixToCSV(double[][] matrix) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (double[] row : matrix) {
+                String line = Arrays.stream(row)
+                        .mapToObj(String::valueOf)
+                        .reduce((a, b) -> a + "," + b)
+                        .orElse("");
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static double[][] loadMatrixFromCSV() {
+        List<double[]> rows = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",");
+                double[] row = Arrays.stream(tokens)
+                        .mapToDouble(Double::parseDouble)
+                        .toArray();
+                rows.add(row);
+            }
+        } catch (IOException e) {
+            return null; // first run
+        }
+
+        return rows.toArray(new double[0][]);
+    }
+     
     
     // Method to input a matrix
     public static int[][] inputMatrix(int rows, int cols, Scanner scanner) {
@@ -156,11 +207,12 @@ public class MatrixCalculator {
     }
     
     
-    public static int[][] scaleMatrix(int[][] matrix, int scalar) {
+    public static double[][] scaleMatrix(int[][] matrix, double scalar) {
         int rows = matrix.length;
         int cols = matrix[0].length;
-        int[][] result = new int[rows][cols];
-
+        double[][] result = new double[rows][cols];
+        
+        // convert to double and scale
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 result[i][j] = matrix[i][j] * scalar;
