@@ -235,7 +235,7 @@ public class MatrixCalculator {
         RealMatrix realMatrix = MatrixUtils.createRealMatrix(doubleMatrix);
         LUDecomposition decomposition = new LUDecomposition(realMatrix);
         double det = decomposition.getDeterminant();
-        return det;
+        return Math.round(det);
     }
     
     public static double[] eigenvalueMatrix(int[][] matrix) {
