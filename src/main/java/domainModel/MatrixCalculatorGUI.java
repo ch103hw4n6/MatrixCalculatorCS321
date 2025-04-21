@@ -6,6 +6,7 @@ import java.awt.*;
 import javax.swing.border.EmptyBorder;
 import java.util.ArrayList; 
 import java.util.List;
+
  
 
 public class MatrixCalculatorGUI extends JFrame {
@@ -223,7 +224,29 @@ public class MatrixCalculatorGUI extends JFrame {
         });
      
         setVisible(true);
+        
+        double[][] lastResult = MatrixCalculator.loadMatrixFromCSV();
+        if (lastResult != null) {
+            int rows = lastResult.length;
+            int cols = lastResult[0].length;
+
+            resultTable = new JTable(rows, cols);
+            setTableProperties(resultTable, cols, rows);
+            resultScrollPane = new JScrollPane(resultTable);
+            resultScrollPane.setBorder(BorderFactory.createTitledBorder("History"));
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    resultTable.setValueAt(lastResult[i][j], i, j);
+                }
+            }
+
+            tablePanel.add(resultScrollPane);
+            tablePanel.revalidate();
+            tablePanel.repaint();
+        }
     }
+    
     
     private void clearInputs() {
         rowsField1.setText("");
@@ -398,6 +421,7 @@ public class MatrixCalculatorGUI extends JFrame {
 
         resultTable.revalidate();
         resultTable.repaint();
+        MatrixCalculator.saveMatrixToCSV(result);
     }
     
     // Overloaded method to update the result table for double matrices (used for inverse)
@@ -412,6 +436,7 @@ public class MatrixCalculatorGUI extends JFrame {
         }
         resultTable.revalidate();
         resultTable.repaint();
+        MatrixCalculator.saveMatrixToCSV(result);
     }
 
     
