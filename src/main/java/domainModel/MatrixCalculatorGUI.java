@@ -37,7 +37,7 @@ public class MatrixCalculatorGUI extends JFrame {
         unaryInstructions.add("Inverse: compute the inverse of a matrix (square matrices only).");
         unaryInstructions.add("Scale: scale a matrix by a rational number.");
         unaryInstructions.add("Determinants: compute the determinant of a matrix (square matrices only).");
-        unaryInstructions.add("Eigendecomposition: compute the eigendecomposition of a matrix (square matrices only).");
+        unaryInstructions.add("Eigen values/vectors: compute the eigen value/vector of a matrix (square matrices only).");
         
         for (String instruction : unaryInstructions) {
             JLabel instructionLabel = new JLabel("• " + instruction);
